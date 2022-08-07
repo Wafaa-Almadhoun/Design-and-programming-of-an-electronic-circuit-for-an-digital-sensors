@@ -84,10 +84,16 @@ Projects is created with:
  ### 2.MPU6050 Gyro Sensor
  
  connected the 3.3v power supply and ground of MPU6050 to the 3.3v and ground of Arduino.
+ 
  SCL and SDA pins of MPU6050 is connected with Arduino’s A4 and A5 pin
+ 
  INT pin of MPU6050 is connected to interrupt 0 of Arduino (D2). 
- LCD’s RS, RW and EN are directly connected to 8, gnd and 9 of Arduino. 
+ 
+ LCD’s RS, RW and EN are directly connected to 8, gnd and 9 of Arduino.
+ 
  Data pin are directly connected to digital pin number 10, 11, 12 and 13.
+ 
+ 
 
 ## Block diagram & simulation
 
@@ -153,3 +159,50 @@ Figure (2): MPU6050 Gyro Sensor circuit
 #### The code 
 
  we have download the MPU6050 library from library manager and install it in Arduino IDE.
+ 
+ #include<LiquidCrystal.h>
+LiquidCrystal lcd(8,9,10,11,12,13);
+#include <Wire.h>
+#include <MPU6050.h>
+void setup()
+{
+  lcd.begin(16,2);
+  lcd.createChar(0, degree);
+  Serial.begin(9600);
+  Serial.println("Initialize MPU6050");
+  while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G))
+  {
+    lcd.clear();
+    lcd.print("Device not Found");
+    Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
+    delay(500);
+  }
+  count=0;
+  mpu.calibrateGyro();
+  mpu.setThreshold(3);
+  void loop()
+{
+    lcd.clear();
+    lcd.print("Temperature");
+    long st=millis();
+    Serial.println("Temperature");
+    while(millis()<st+period)
+    {
+      lcd.setCursor(0,1);
+      tempShow();
+    }
+    lcd.clear();
+    lcd.print("Gyro");
+    delay(2000);
+    st=millis();
+    Serial.println("Gyro");
+    while(millis()<st+period)
+    {
+      lcd.setCursor(0,1);
+      gyroShow();
+    }
+    lcd.clear();
+    lcd.print("Accelerometer");
+    delay(2000);
+    st=millis();
+  
